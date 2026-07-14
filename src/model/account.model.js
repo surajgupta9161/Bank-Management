@@ -5,12 +5,13 @@ const accountSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
+      index: true
     },
     status: {
       type: String,
       enum: {
-        values: ['active', 'inactive', 'frozen'],
+        values: ['active', 'frozen', 'closed'],
         message: 'Status can be active, inactive or frozen.'
       },
       default: 'active'
@@ -25,6 +26,8 @@ const accountSchema = new mongoose.Schema(
     timestamps: true
   }
 )
+
+accountSchema.index({ user: 1, status: 1 })
 
 const accountModel = mongoose.model('account', accountSchema)
 
