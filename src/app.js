@@ -12,11 +12,13 @@ app.use(cookieParser())
  */
 const userRoute = require('./routes/auth.route')
 const accountRoute = require('./routes/account.route')
+const transactionRoute = require('./routes/transaction.route')
 
 /**
  * - use routes middleware
  */
 app.use('/api/auth', userRoute)
 app.use('/api/account', accountRoute)
+app.use('/api/transaction', transactionRoute)
 
 module.exports = app

@@ -121,4 +121,71 @@ const sendEmailToUser = async (Useremail, name) => {
   await sendEmail(Useremail, subject, text, html)
 }
 
-module.exports = { sendEmailToUser }
+const sendTransactionEmail = async (Useremail, name, amount, toAccount) => {
+  const subject = '🎉 Transaction Completed'
+
+  const text = `
+        Hi ${name},
+
+        Your transaction has been completed successfully.
+
+        Transaction Details:
+        Amount: ${amount}
+        To Account: ${toAccount}
+
+        If you did not initiate this transaction, please contact our support team immediately.
+
+        Thank you for choosing Bank Management.
+
+        Regards,
+        Bank Management Team
+        `
+  const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden;">
+        
+        <div style="background: #0d6efd; color: #fff; padding: 20px; text-align: center;">
+            <h2 style="margin: 0;">🎉 Transaction Completed</h2>
+        </div>`
+
+  await sendEmail(Useremail, subject, text, html)
+}
+
+const sendTransactionFailedEmail = async (
+  Useremail,
+  name,
+  amount,
+  toAccount
+) => {
+  const subject = '❌ Transaction Failed'
+
+  const text = `
+        Hi ${name},
+
+        Your transaction has failed.
+
+        Transaction Details:
+        Amount: ${amount}
+        To Account: ${toAccount}
+
+        If you did not initiate this transaction, please contact our support team immediately.
+
+        Thank you for choosing Bank Management.
+
+        Regards,
+        Bank Management Team
+        `
+  const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 30px auto; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden;">
+        
+        <div style="background: #0d6efd; color: #fff; padding: 20px; text-align: center;">
+            <h2 style="margin: 0;">❌ Transaction Failed</h2>
+        </div>`
+
+  await sendEmail(Useremail, subject, text, html)
+}
+
+module.exports = {
+  sendEmailToUser,
+  sendTransactionEmail,
+  sendTransactionFailedEmail
+}
