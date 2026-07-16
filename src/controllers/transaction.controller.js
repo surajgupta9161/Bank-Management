@@ -52,6 +52,14 @@ const createTransaction = async (req, res) => {
       return res.status(400).json({ message: 'Transaction already failed' })
     }
   }
+
+  /*3. Check account status*/
+  if (
+    fromAccountDetails.status === 'closed' ||
+    toAccountDetails.status === 'closed'
+  ) {
+    return res.status(400).json({ message: 'From or toAccount is closed' })
+  }
 }
 
 module.exports = { createTransaction }
