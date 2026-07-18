@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const ledgerModel = require('./ledger.model')
 const accountSchema = new mongoose.Schema(
   {
     user: {
@@ -11,7 +11,7 @@ const accountSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ['active', 'frozen', 'closed'],
+        values: ['ACTIVE', 'FROZEN', 'INACTIVE'],
         message: 'Status can be active, inactive or frozen.'
       },
       default: 'active'
@@ -28,6 +28,37 @@ const accountSchema = new mongoose.Schema(
 )
 
 accountSchema.index({ user: 1, status: 1 })
+
+accountSchema.methods.getBalance = async function () {
+  /* Get available balance from ledger using aggregation pipeline */
+  const availableBalance = await ledgerModel.aggregate([
+    { $match: { account: this._id } },
+    {
+      $group: {
+        _id: null,
+        totalDebit: {
+          $sum: {
+            $cond: [{ $eq: ['$type', 'DEBIT'] }, '$amount', 0]
+          }
+        },
+        totalCredit: {
+          $sum: {
+            $cond: [{ $eq: ['$type', 'CREDIT'] }, '$amount', 0]
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        availableBalance: { $subtract: ['$totalCredit', '$totalDebit'] }
+      }
+    }
+  ])
+  /* If availableBalance is empty then return 0, aggregation is return an aarray */
+  if (availableBalance.length === 0) return 0
+  return availableBalance[0].availableBalance
+}
 
 const accountModel = mongoose.model('account', accountSchema)
 
